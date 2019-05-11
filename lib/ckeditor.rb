@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'orm_adapter'
 require 'pathname'
 
@@ -25,7 +27,6 @@ module Ckeditor
     autoload :Paperclip, 'ckeditor/backend/paperclip'
     autoload :CarrierWave, 'ckeditor/backend/carrierwave'
     autoload :Dragonfly, 'ckeditor/backend/dragonfly'
-    autoload :Refile, 'ckeditor/backend/refile'
   end
 
   IMAGE_TYPES = %w[image/jpeg image/png image/gif image/jpg image/pjpeg image/tiff image/x-png].freeze
@@ -69,15 +70,9 @@ module Ckeditor
   mattr_accessor :default_per_page
   @@default_per_page = 24
 
-  # Asset restrictions
-  mattr_accessor :assets_languages
-  mattr_accessor :assets_plugins
-  @@assets_languages = nil
-  @@assets_plugins = nil
-
   # CKEditor CDN
   mattr_accessor :cdn_url
-  @@cdn_url = nil
+  @@cdn_url = '//cdn.ckeditor.com/4.11.3/standard/ckeditor.js'
 
   # Url to ckeditor config, used when CDN enabled
   mattr_accessor :js_config_url
@@ -123,11 +118,7 @@ module Ckeditor
 
   # All css and js files from ckeditor folder
   def self.assets
-    @assets ||= if Ckeditor.cdn_enabled?
-                  ['ckeditor/config.js']
-                else
-                  Utils.select_assets('ckeditor', 'vendor/assets/javascripts') << 'ckeditor/init.js'
-                end
+    @assets ||= Ckeditor.cdn_enabled? ? ['ckeditor/config.js'] : []
   end
 
   def self.assets=(value)

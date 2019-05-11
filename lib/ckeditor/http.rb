@@ -1,4 +1,5 @@
-# encoding: utf-8
+# frozen_string_literal: true
+
 require 'digest/sha1'
 
 module Ckeditor
@@ -41,16 +42,16 @@ module Ckeditor
     class QqFile < ::Tempfile
       attr_reader :original_filename
 
-      def initialize(filename, request, tmpdir = Dir.tmpdir)
+      def initialize(filename, request)
         @original_filename = filename
         @request = request
 
-        super(Digest::SHA1.hexdigest(filename), tmpdir)
-        binmode
+        super(Digest::SHA1.hexdigest(filename))
         fetch
       end
 
       def fetch
+        binmode
         write(body)
         rewind
         self
@@ -72,12 +73,14 @@ module Ckeditor
     # Convert nested Hash to HashWithIndifferentAccess and replace
     # file upload hash with UploadedFile objects
     def self.normalize_param(*args)
-      value = args.first
+      value = args.compact.first
 
       if value.is_a?(Hash) && value.key?(:tempfile)
         UploadedFile.new(value)
       elsif value.is_a?(String)
         QqFile.new(*args)
+      elsif value.is_a?(ActionDispatch::Request)
+        value.params['upload']
       else
         value
       end

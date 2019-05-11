@@ -1,5 +1,7 @@
-class CreatePosts < ActiveRecord::Migration
-  def self.up
+# frozen_string_literal: true
+
+class CreatePosts < ActiveRecord::Migration[5.2]
+  def up
     create_table :posts do |t|
       t.string :title
       t.text :info
@@ -8,7 +10,7 @@ class CreatePosts < ActiveRecord::Migration
     end
   end
 
-  def self.down
+  def down
     drop_table :posts
   end
 end

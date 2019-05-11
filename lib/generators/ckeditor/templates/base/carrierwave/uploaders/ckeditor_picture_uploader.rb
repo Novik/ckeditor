@@ -1,4 +1,5 @@
-# encoding: utf-8
+# frozen_string_literal: true
+
 class CkeditorPictureUploader < CarrierWave::Uploader::Base
   include Ckeditor::Backend::CarrierWave
 
@@ -27,8 +28,6 @@ class CkeditorPictureUploader < CarrierWave::Uploader::Base
   # def scale(width, height)
   #   # do something
   # end
-
-  process :extract_dimensions
 
   # Create different versions of your uploaded files:
   version :thumb do

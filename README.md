@@ -7,8 +7,8 @@ CKEditor is a WYSIWYG text editor designed to simplify web content creation. It 
 
 ## Features
 
-* CKEditor version 4.11.1 full (8 November 2018)
-* Rails 5.0.x, 5.1.x, 4.2.x integration
+* CKEditor version 4.x (https://ckeditor.com/ckeditor-4/)
+* Rails 5.x, 4.2.x integration
 * Files browser
 * HTML5 file uploader
 * Hooks for formtastic and simple_form forms generators
@@ -37,13 +37,13 @@ gem 'ckeditor', '4.1.3'
 Include this inside your `config/initializers/assets.rb`:
 
 ```
-Rails.application.config.assets.precompile += %w( ckeditor/*)
+Rails.application.config.assets.precompile += %w[ckeditor/config.js]
 ```
 
 For file upload support, you must generate the necessary file storage models.
 The currently supported backends are:
 
-* ActiveRecord (paperclip, carrierwave, dragonfly, refile)
+* ActiveRecord (paperclip, carrierwave, dragonfly)
 * Mongoid (paperclip, carrierwave, dragonfly)
 
 ### How to generate models to store uploaded files
@@ -65,15 +65,6 @@ gem 'carrierwave'
 gem 'mini_magick'
 
 rails generate ckeditor:install --orm=active_record --backend=carrierwave
-```
-
-#### ActiveRecord + refile
-
-```
-gem 'refile', require: "refile/rails"
-gem 'refile-mini_magick'
-
-rails generate ckeditor:install --orm=active_record --backend=refile
 ```
 
 #### ActiveRecord + dragonfly
@@ -120,20 +111,6 @@ mount Ckeditor::Engine => '/ckeditor'
 
 ## Usage
 
-### Load editor from gem vendor
-
-Include ckeditor javascripts in your `app/assets/javascripts/application.js`:
-
-```
-//= require ckeditor/init
-```
-
-Make sure that you put it before:
-
-```
-//= require_tree .
-```
-
 ### Load editor via CKEditor CDN
 
 Setup editor version to load (more info here http://cdn.ckeditor.com/)
@@ -158,7 +135,7 @@ Precompile ckeditor/config.js:
 ```ruby
 # in config/initializers/assets.rb
 
-Rails.application.config.assets.precompile += %w(ckeditor/config.js)
+Rails.application.config.assets.precompile += %w[ckeditor/config.js]
 ```
 
 ### Form helpers
@@ -221,46 +198,6 @@ CKEDITOR.editorConfig = function (config) {
 }
 ```
 
-### Deployment (only if you use ckeditor from gem vendor)
-
-For Rails 4 and 5, add the following to `config/initializers/assets.rb`:
-
-```ruby
-Rails.application.config.assets.precompile += %w( ckeditor/* )
-```
-
-As of version 4.1.0, non-digested assets of Ckeditor will simply be copied after digested assets were compiled.
-For older versions, use gem [non-stupid-digest-assets](https://rubygems.org/gems/non-stupid-digest-assets), to copy non digest assets.
-
-To reduce the asset precompilation time, you can limit plugins and/or languages to those you need:
-
-```ruby
-# in config/initializers/ckeditor.rb
-
-Ckeditor.setup do |config|
-  config.assets_languages = ['en', 'fr']
-  config.assets_plugins = ['image', 'smiley']
-end
-```
-
-Note that you have to list your plugins, including all their dependencies.
-
-### Include customized CKEDITOR_BASEPATH setting
-
-Add your app/assets/javascripts/ckeditor/basepath.js.erb like
-
-```erb
-<%
-  base_path = ''
-  if ENV['PROJECT'] =~ /editor/i
-    base_path << "/#{Rails.root.basename.to_s}/"
-  end
-  base_path << Rails.application.config.assets.prefix
-  base_path << '/ckeditor/'
-%>
-var CKEDITOR_BASEPATH = '<%= base_path %>';
-```
-
 ### AJAX
 
 jQuery sample:
@@ -285,7 +222,7 @@ jQuery sample:
 ```
 
 ### SimpleForm integration
-Note that the toolbar option should match the case specified in the config. If the config is not found it defaults to all available toolbar items. 
+Note that the toolbar option should match the case specified in the config. If the config is not found it defaults to all available toolbar items.
 
 i.e. config.toolbar_mini becomes {toolbar: 'mini'} in the form.
 
@@ -354,7 +291,7 @@ By default, only the user that logged in can access the models (with actions *in
 You can customize these two policy files as you like.
 
 ## Engine configuration
- 
+
 * To override the default CKEditor routes create a [config.js](https://github.com/galetahub/ckeditor/blob/master/app/assets/javascripts/ckeditor/config.js) file within the host application at `app/assets/javascripts/ckeditor/config.js`
 
 * By default, the engine inherits from `ApplicationController`. To override the default parent controller:
@@ -395,7 +332,6 @@ en:
 ```bash
 $> rake test CKEDITOR_BACKEND=paperclip
 $> rake test CKEDITOR_BACKEND=carrierwave
-$> rake test CKEDITOR_BACKEND=refile
 $> rake test CKEDITOR_BACKEND=dragonfly
 $> rake test CKEDITOR_ORM=mongoid
 

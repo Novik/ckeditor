@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Use this hook to configure ckeditor
 Ckeditor.setup do |config|
   # ==> ORM configuration
@@ -40,11 +42,6 @@ Ckeditor.setup do |config|
   # Customize ckeditor assets path
   # By default: nil
   # config.asset_path = 'http://www.example.com/assets/ckeditor/'
-
-  # To reduce the asset precompilation time, you can limit plugins and/or languages to those you need:
-  # By default: nil (no limit)
-  # config.assets_languages = ['en', 'uk']
-  # config.assets_plugins = ['image', 'smiley']
 
   # CKEditor CDN
   # More info here http://cdn.ckeditor.com/
