@@ -71,18 +71,18 @@ module Ckeditor
 
     def errors_ckeditor
       {
-        html: javascript_tag("#{FUNCTION}(#{params[:CKEditorFuncNum]}, null, '#{error_message}');")
+        html: javascript_tag("#{FUNCTION}(#{params[:CKEditorFuncNum]}, null, '#{Ckeditor::Utils.escape_single_quotes(error_message)}');")
       }
     end
 
     def errors_default
       {
-        json: { message: error_message }.to_json
+        json: { error: error_message }.to_json
       }
     end
 
     def error_message
-      Ckeditor::Utils.escape_single_quotes(asset.errors.full_messages.first)
+      asset.errors.full_messages.first
     end
 
     def asset_url(relative_url_root)
