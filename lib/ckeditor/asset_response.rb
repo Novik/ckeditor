@@ -77,7 +77,7 @@ module Ckeditor
 
     def errors_default
       {
-        json: { error: error_message }.to_json
+        json: { error: { message: error_message } }.to_json
       }
     end
 
