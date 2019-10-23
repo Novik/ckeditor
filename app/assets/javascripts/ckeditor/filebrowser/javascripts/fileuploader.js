@@ -371,7 +371,7 @@ qq.FileUploaderBasic.prototype = {
     _onComplete: function(id, fileName, result){
         this._filesInProgress--;                 
         if (result.error){
-            this._options.showMessage(result.error);
+            this._options.showMessage(result.error['message'] ? result.error['message'] : result.error);
         } else {
           this._filesUploaded++;
         }             
