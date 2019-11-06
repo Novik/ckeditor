@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails/generators'
 require 'rails/generators/migration'
 
@@ -13,7 +15,7 @@ module Ckeditor
                          desc: 'Backend processor for upload support'
 
       class_option :backend, type: :string, default: 'paperclip',
-                             desc: 'paperclip (default), carrierwave, refile or dragonfly'
+                             desc: 'paperclip (default), active_storage, carrierwave or dragonfly'
 
       def self.source_root
         @source_root ||= File.expand_path(File.join(File.dirname(__FILE__), 'templates'))
@@ -29,6 +31,10 @@ module Ckeditor
 
         if backend_dragonfly?
           template 'base/dragonfly/initializer.rb', 'config/initializers/ckeditor_dragonfly.rb'
+        end
+
+        if backend_shrine?
+          template 'base/shrine/initializer.rb', 'config/initializers/ckeditor_shrine.rb'
         end
       end
 
@@ -52,11 +58,10 @@ module Ckeditor
       end
 
       def create_ckeditor_migration
-        if ['active_record'].include?(orm)
-          migration_template "#{generator_dir}/#{migration_file}.rb",
-                             File.join('db/migrate', 'create_ckeditor_assets.rb'),
-                             migration_version: migration_version
-        end
+        return unless ['active_record'].include?(orm)
+
+        migration_template "#{generator_dir}/migration.rb",
+                           File.join('db/migrate', 'create_ckeditor_assets.rb')
       end
 
       protected
@@ -67,6 +72,10 @@ module Ckeditor
 
       def backend_dragonfly?
         backend == 'dragonfly'
+      end
+
+      def backend_shrine?
+        backend == 'shrine'
       end
 
       def ckeditor_dir
@@ -87,18 +96,6 @@ module Ckeditor
 
       def backend
         (options[:backend] || 'paperclip').to_s
-      end
-
-      def rails5?
-        Rails.version.start_with? '5'
-      end
-
-      def migration_version
-        "[#{Rails::VERSION::MAJOR}.#{Rails::VERSION::MINOR}]"
-      end
-
-      def migration_file
-        rails5? ? 'migration_versioned' : 'migration'
       end
     end
   end
